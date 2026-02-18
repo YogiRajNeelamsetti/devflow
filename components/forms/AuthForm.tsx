@@ -1,7 +1,7 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Controller, DefaultValues, FieldValues, Path, SubmitHandler, useForm } from "react-hook-form"
+import { DefaultValues, FieldValues, Path, SubmitHandler, useForm } from "react-hook-form"
 import { toast } from "sonner"
 import * as z from "zod"
 
@@ -14,14 +14,12 @@ import {
     FormLabel,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { ZodType } from "zod"
-import { de } from "zod/locales"
 import Link from "next/link"
 import ROUTES from "@/constants/route"
 
 interface AuthFormProps<T extends FieldValues> {
     formType: "SIGN_IN" | "SIGN_UP";
-    schema: ZodType<T>;
+    schema: z.ZodType<T>;
     defaultValues: T;
     onSubmit: (data: T) => Promise<{ success: boolean; }>;
 } 
@@ -37,8 +35,11 @@ const AuthForm = <T extends FieldValues>({
     defaultValues: defaultValues as DefaultValues<T>,
   })
 
-  const handleSubmit: SubmitHandler<T> = async () => {
-
+  const handleSubmit: SubmitHandler<T> = async (data) => {
+    const result = await onSubmit(data);
+    if (!result.success) {
+      toast.error("Something went wrong.");
+    }
   };
 
   const buttonText = formType === "SIGN_IN" ? "Sign In" : "Sign Up";
@@ -59,7 +60,7 @@ const AuthForm = <T extends FieldValues>({
                             </FormLabel>
                             <FormControl>
                                 <Input required type={field.name === 'password' ? 'password' : 'text'} {...field} 
-                                className="paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 rounded-1.5 border no focus min-h-12"/>
+                                className="paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 rounded-1.5 border no-focus min-h-12"/>
                             </FormControl>
                         </FormItem>
                     )}

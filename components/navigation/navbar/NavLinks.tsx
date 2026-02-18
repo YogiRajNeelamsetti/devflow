@@ -2,6 +2,7 @@
 import { SheetClose } from "@/components/ui/sheet";
 import { sidebarLinks } from "@/constants"
 import { cn } from "@/lib/utils";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation"
@@ -9,20 +10,22 @@ import React from "react";
 
 const NavLinks = ({ isMobileNav = false}: { isMobileNav?: boolean }) => {
     const pathname = usePathname();
-    const userId = 1;
+    const { data: session } = useSession();
+    const userId = session?.user?.id;
   return (
     <>
         {sidebarLinks.map((item) => {
             const isActive = (pathname.includes(item.route) && item.route.length > 1) || pathname === item.route;
 
-            if(item.route === '/profile') {
-                if(userId) item.route = `/profile/${userId}`;
-                else return  null;
-            }
+            const linkRoute = item.route === '/profile'
+                ? (userId ? `/profile/${userId}` : null)
+                : item.route;
+
+            if (!linkRoute) return null;
 
             const LinkComponent = (
                 <Link 
-                href={item.route}
+                href={linkRoute}
                 key={item.label}
                 className={cn(isActive ? 'primary-gradient rounded-lg text-light-900' : 'text-dark300_light900', 'flex items-center justify-start gap-4 bg-transparent p-4')}
                 >

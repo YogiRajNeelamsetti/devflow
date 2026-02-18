@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   description:
     "A community-driven platform for asking and answering programming questions. Get help, share knowledge, and collaborate with developers from around the world. Explore topics in web development, mobile app development, algorithms, data structures, and more.",
   icons: {
-    icon: "images/site-logo.svg",
+    icon: "/images/site-logo.svg",
   },
 };
 
@@ -33,7 +33,7 @@ const RootLayout = async ({ children }:{ children: ReactNode; }) => {
   const session = await auth();
   return (
     <html lang="en" suppressHydrationWarning>
-      <SessionProvider session={session}>
+      
         <head>
           
           <link rel="stylesheet" type='text/css' href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
@@ -42,18 +42,18 @@ const RootLayout = async ({ children }:{ children: ReactNode; }) => {
         <body
           className={`${inter.className} ${spaceGrotesk.variable} antialiased`}
         >
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            
-            {children}
-          </ThemeProvider>
-          <Toaster />
+          <SessionProvider session={session}>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              {children}
+            </ThemeProvider>
+            <Toaster />
+          </SessionProvider>
         </body>
-      </SessionProvider>
     </html>
   );
 }
